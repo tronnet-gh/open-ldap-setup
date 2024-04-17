@@ -17,8 +17,14 @@ sn: $ADMIN_SN
 uid: $ADMIN_ID
 userPassword: $ADMIN_PASSWD
 
+# initial user personal group
+dn: cn=$ADMIN_ID,ou=groups,$BASE_DN
+objectClass: groupOfNames
+cn: alu
+member: uid=$ADMIN_ID,ou=people,$BASE_DN
+
 # admin group
 dn: cn=admins,ou=groups,$BASE_DN
 objectClass: groupOfNames
-member: uid=$ADMIN_ID,ou=people,$BASE_DN
 cn: admins
+member: uid=$ADMIN_ID,ou=people,$BASE_DN
