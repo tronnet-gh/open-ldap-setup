@@ -52,7 +52,8 @@ echo "DO TLS        = ${DO_TLS}"
 echo "+===============+"
 
 read -p "Base DN: " BASE_DN
-if [ "$DO_FIRST" = 1 ]; then
+
+if [ "$DO_INIT" = 1 ]; then
     read -p "Admin User ID: " ADMIN_ID
     read -p "Admin User Email: " ADMIN_EMAIL
     read -p "Admin User CN: " ADMIN_CN
@@ -65,6 +66,7 @@ if [ "$DO_FIRST" = 1 ]; then
         ! [ "$ADMIN_PASSWD" = "$CONFIRM_PASSWD" ]
     do echo "Passwords must match" ; done
 fi
+
 if [ "$DO_TLS" = 1 ]; then
     read -p "CA Cert File Path: " CA_FILE
     read -p "Server Cert File Path: " CERT_FILE
@@ -76,13 +78,15 @@ if [ "$DO_AUTH" = 1 ]; then
     sudo ldapmodify -H ldapi:/// -Y EXTERNAL -f auth.ldif
     rm auth.ldif
 fi
-if [ "$DO_FIRST" = 1 ]; then
+
+if [ "$DO_INIT" = 1 ]; then
     envsubst '$BASE_DN' < pass.template.ldif > pass.ldif
     envsubst '$BASE_DN:$ADMIN_ID:$ADMIN_EMAIL:$ADMIN_CN:$ADMIN_SN:$ADMIN_PASSWD' < init.template.ldif > init.ldif
     sudo ldapmodify -H ldapi:/// -Y EXTERNAL -f pass.ldif
     sudo ldapadd -H ldapi:/// -Y EXTERNAL -c -f init.ldif
     rm pass.ldif init.ldif
 fi
+
 if [ "$DO_TLS" = 1 ]; then
     envsubst '$CA_FILE:$CERT_FILE:$KEY_FILE' < tls.template.ldif > tls.ldif
     sudo ldapmodify -Y EXTERNAL -H ldapi:/// -f tls.ldif
