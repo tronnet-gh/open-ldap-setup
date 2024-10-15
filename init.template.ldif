@@ -20,7 +20,7 @@ userPassword: $ADMIN_PASSWD
 # initial user personal group
 dn: cn=$ADMIN_ID,ou=groups,$BASE_DN
 objectClass: groupOfNames
-cn: alu
+cn: $ADMIN_ID
 member: uid=$ADMIN_ID,ou=people,$BASE_DN
 
 # admin group
