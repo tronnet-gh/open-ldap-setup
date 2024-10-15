@@ -4,12 +4,12 @@ changetype: modify
 delete: olcAccess
 -
 add: olcAccess
-olcAccess: {0}to attrs=userPassword
+olcAccess: {0}to dn.subtree="ou=people,$BASE_DN" attrs=userPassword
     by group/groupOfNames/member="cn=admins,ou=groups,$BASE_DN" =wcdx
     by self write 
     by anonymous auth 
     by * none
-olcAccess: {1}to attrs=shadowLastChange,cn,sn
+olcAccess: {1}to dn.subtree="ou=people,$BASE_DN" attrs=shadowLastChange,cn,sn
     by self write 
     by * read
 olcAccess: {2}to dn.subtree="$BASE_DN"
