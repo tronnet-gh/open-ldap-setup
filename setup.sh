@@ -18,6 +18,7 @@ DO_TLS=1
 
 POSITIONAL_ARGS=()
 
+# parse CLI arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         --skip-auth)
@@ -51,8 +52,10 @@ echo "DO AUTH       = ${DO_AUTH}"
 echo "DO TLS        = ${DO_TLS}"
 echo "+===============+"
 
+# always read in base dn
 read -p "Base DN: " BASE_DN
 
+# read in init admin info
 if [ "$DO_INIT" = 1 ]; then
     read -p "Admin User ID: " ADMIN_ID
     read -p "Admin User Email: " ADMIN_EMAIL
@@ -67,18 +70,21 @@ if [ "$DO_INIT" = 1 ]; then
     do echo "Passwords must match" ; done
 fi
 
+# read in infor for tls config
 if [ "$DO_TLS" = 1 ]; then
     read -p "CA Cert File Path: " CA_FILE
     read -p "Server Cert File Path: " CERT_FILE
     read -p "Server Key File Path: " KEY_FILE
 fi
 
+# execute modify auth
 if [ "$DO_AUTH" = 1 ]; then
     envsubst '$BASE_DN' < auth.template.ldif > auth.ldif
     sudo ldapmodify -H ldapi:/// -Y EXTERNAL -f auth.ldif
     rm auth.ldif
 fi
 
+# execute add init, which cannot be done on an already initialized system
 if [ "$DO_INIT" = 1 ]; then
     envsubst '$BASE_DN' < pass.template.ldif > pass.ldif
     envsubst '$BASE_DN:$ADMIN_ID:$ADMIN_EMAIL:$ADMIN_CN:$ADMIN_SN:$ADMIN_PASSWD' < init.template.ldif > init.ldif
@@ -87,6 +93,7 @@ if [ "$DO_INIT" = 1 ]; then
     rm pass.ldif init.ldif
 fi
 
+# execute modify tls
 if [ "$DO_TLS" = 1 ]; then
     envsubst '$CA_FILE:$CERT_FILE:$KEY_FILE' < tls.template.ldif > tls.ldif
     sudo ldapmodify -Y EXTERNAL -H ldapi:/// -f tls.ldif
