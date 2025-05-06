@@ -22,7 +22,7 @@ SERVER_CERT="${LDAP_DIR}/ldap-server-cert.pem"
 read -p "Organization: " ORG
 read -p "CA CN (FQDN): " CN
 
-# write CA tempalte info
+# write CA template info
 cat > $CA_INFO <<EOF
 cn = ${ORG}
 ca
